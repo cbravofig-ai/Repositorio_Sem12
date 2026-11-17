@@ -1,0 +1,175 @@
+--------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\Camila\Desktop\Fundamentos de Programación\Repositorios\Repositorio_Sem12\output/tarea_a5.log
+  log type:  text
+ opened on:  17 Nov 2026, 18:24:12
+
+. 
+. * 2. Carga los datos
+. * ------------------------------------------------------------
+. import delimited "data/raw/casen_reducido.csv", clear varnames(1) encoding("utf-8")
+(6 vars, 60 obs)
+
+. describe
+
+Contains data
+ Observations:            60                  
+    Variables:             6                  
+--------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+region          str13   %13s                  
+sector          str13   %13s                  
+educ            byte    %8.0g                 
+edad            byte    %8.0g                 
+ingreso         long    %12.0g                
+genero          str1    %9s                   
+--------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. summarize
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+      region |          0
+      sector |          0
+        educ |         60    12.73333    3.328697          6         20
+        edad |         60    44.51667    15.15959         20         70
+     ingreso |         55    655290.9    209912.4     180000    1093000
+-------------+---------------------------------------------------------
+      genero |          0
+
+. 
+. * 3. Crea variables con generate y replace
+. * ------------------------------------------------------------
+. * Experiencia potencial de Mincer
+. generate experiencia = max(edad - educ - 6, 0)
+
+. 
+. * Indicadora: Mujer
+. generate mujer = (genero == "F")
+
+. 
+. * Indicadora: Alta educación para usar el comando replace
+. generate alta_educ = 0
+
+. replace alta_educ = 1 if educ >= 13
+(30 real changes made)
+
+. 
+. * 4. Etiqueta (la cultura de Stata)
+. * ------------------------------------------------------------
+. label variable experiencia "Experiencia potencial (años)"
+
+. label variable mujer "Mujer"
+
+. label variable alta_educ "Educación superior (13+ años)"
+
+. 
+. * Etiquetar valores (Recomendado por la pauta)
+. label define lbl_mujer 0 "Hombre" 1 "Mujer"
+
+. label values mujer lbl_mujer
+
+. 
+. * 5. Cuidado con los missing
+. * ------------------------------------------------------------
+. * Demostración empírica del gotcha de Stata
+. count if ingreso > 500000
+  46
+
+. count if ingreso > 500000 & !missing(ingreso)
+  41
+
+. 
+. /* COMENTARIO SOBRE LOS MISSING:
+> ¿Por qué summarize ingreso no se equivoca, pero count if sí?
+> El comando summarize ignora automáticamente los valores perdidos al hacer cálculos. En cambio, count se equivoca p
+> orque Stata trata el valor missing (.) como el infinito positivo. Al correr count if ingreso > 500000 cuenta 46 ca
+> sos, 
+> incluyendo los 5 missing. La forma correcta excluye los faltantes 
+> (& !missing(ingreso)), dando el valor real de 41 casos.
+> */
+. 
+. * 6. Descriptivos
+. * ------------------------------------------------------------
+. summarize edad educ experiencia ingreso
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        edad |         60    44.51667    15.15959         20         70
+        educ |         60    12.73333    3.328697          6         20
+ experiencia |         60    25.78333     15.3182          0         53
+     ingreso |         55    655290.9    209912.4     180000    1093000
+
+. tabulate sector
+
+       sector |      Freq.     Percent        Cum.
+--------------+-----------------------------------
+  Agricultura |         13       21.67       21.67
+     Comercio |          6       10.00       31.67
+ Construcción |          5        8.33       40.00
+    Educación |          8       13.33       53.33
+    Industria |         11       18.33       71.67
+    Servicios |         17       28.33      100.00
+--------------+-----------------------------------
+        Total |         60      100.00
+
+. tabulate mujer
+
+      Mujer |      Freq.     Percent        Cum.
+------------+-----------------------------------
+     Hombre |         31       51.67       51.67
+      Mujer |         29       48.33      100.00
+------------+-----------------------------------
+      Total |         60      100.00
+
+. 
+. * Cruce requerido por grupo
+. summarize ingreso if mujer == 0
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+     ingreso |         28    673607.1    197088.3     226000     987000
+
+. summarize ingreso if mujer == 1
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+     ingreso |         27    636296.3    224593.3     180000    1093000
+
+. 
+. correlate ingreso educ experiencia
+(obs=55)
+
+             |  ingreso     educ experi~a
+-------------+---------------------------
+     ingreso |   1.0000
+        educ |   0.6767   1.0000
+ experiencia |  -0.0875  -0.1171   1.0000
+
+
+. 
+. * Guardar en scalar la media
+. summarize ingreso
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+     ingreso |         55    655290.9    209912.4     180000    1093000
+
+. scalar media_ingreso = r(mean)
+
+. display "La media del ingreso en la muestra es de $" media_ingreso
+La media del ingreso en la muestra es de $655290.91
+
+. 
+. * 7. Cierra la bitácora e interpreta
+. * ------------------------------------------------------------
+. log close
+      name:  <unnamed>
+       log:  C:\Users\Camila\Desktop\Fundamentos de Programación\Repositorios\Repositorio_Sem12\output/tarea_a5.log
+  log type:  text
+ closed on:  17 Nov 2026, 18:24:12
+--------------------------------------------------------------------------------------------------------------------
