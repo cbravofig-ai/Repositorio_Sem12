@@ -1,0 +1,26 @@
+------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\Camila\Desktop\Fundamentos de Programación\R
+> epositorios\Repositorio_Sem12\output/s12s1_prueba.log
+  log type:  text
+ opened on:  17 Nov 2026, 17:02:23
+
+. display "Esto queda escrito en el log"
+Esto queda escrito en el log
+
+. summarize edad
+
+    Variable |        Obs        Mean    Std. dev.       Min      
+>   Max
+-------------+----------------------------------------------------
+> -----
+        edad |         60    44.51667    15.15959         20      
+>    70
+
+. log close
+      name:  <unnamed>
+       log:  C:\Users\Camila\Desktop\Fundamentos de Programación\R
+> epositorios\Repositorio_Sem12\output/s12s1_prueba.log
+  log type:  text
+ closed on:  17 Nov 2026, 17:02:23
+------------------------------------------------------------------

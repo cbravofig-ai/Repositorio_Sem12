@@ -1,0 +1,102 @@
+--------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\Camila\Desktop\Fundamentos d
+> e Programación\Repositorios\Repositorio_Sem12\ou
+> tput/casen_s12.log
+  log type:  text
+ opened on:  17 Nov 2026, 17:17:01
+
+. 
+. import delimited "data/raw/casen_reducido.csv", 
+> clear varnames(1) encoding("utf-8")
+(6 vars, 60 obs)
+
+. 
+. * Variables derivadas (con intención económica)
+. generate experiencia = edad - educ - 6          
+>              // años desde que dejó de estudiar
+
+. replace  experiencia = 0 if experiencia < 0     
+>              // nadie tiene experiencia negativa
+(0 real changes made)
+
+. generate pobre = (ingreso < 216000) if !missing(
+> ingreso)     // sin ingreso = sin dato, no "no p
+> obre"
+(5 missing values generated)
+
+. 
+. * Etiquetas
+. label variable experiencia "Experiencia potencia
+> l (años)"
+
+. label define sino 0 "No pobre" 1 "Pobre"
+
+. label values pobre sino
+
+. 
+. * Descriptivos
+. summarize ingreso educ edad
+
+    Variable |        Obs        Mean    Std. dev.
+>        Min        Max
+-------------+------------------------------------
+> ---------------------
+     ingreso |         55    655290.9    209912.4 
+>     180000    1093000
+        educ |         60    12.73333    3.328697 
+>          6         20
+        edad |         60    44.51667    15.15959 
+>         20         70
+
+. tabstat ingreso, by(sector) stat(mean sd n)
+
+Summary for variables: ingreso
+Group variable: sector 
+
+       sector |      Mean        SD         N
+--------------+------------------------------
+  Agricultura |  447846.2  156716.2        13
+     Comercio |  523833.3  135666.4         6
+ Construcción |    520800  115694.4         5
+    Educación |  908857.1  117920.1         7
+    Industria |  697888.9  154652.4         9
+    Servicios |    788600  112702.4        15
+--------------+------------------------------
+        Total |  655290.9  209912.4        55
+---------------------------------------------
+
+. tabulate genero pobre, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+           |         pobre
+    genero |  No pobre      Pobre |     Total
+-----------+----------------------+----------
+         F |        26          1 |        27 
+           |     96.30       3.70 |    100.00 
+-----------+----------------------+----------
+         M |        28          0 |        28 
+           |    100.00       0.00 |    100.00 
+-----------+----------------------+----------
+     Total |        54          1 |        55 
+           |     98.18       1.82 |    100.00 
+
+. 
+. save "data/processed/casen_limpio.dta", replace
+(file data/processed/casen_limpio.dta not found)
+file data/processed/casen_limpio.dta saved
+
+. log close
+      name:  <unnamed>
+       log:  C:\Users\Camila\Desktop\Fundamentos d
+> e Programación\Repositorios\Repositorio_Sem12\ou
+> tput/casen_s12.log
+  log type:  text
+ closed on:  17 Nov 2026, 17:17:01
+--------------------------------------------------

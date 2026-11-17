@@ -1,0 +1,66 @@
+------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\Camila\Desktop\Fundamentos de Programación\R
+> epositorios\Repositorio_Sem12\output/s12s1_casen.log
+  log type:  text
+ opened on:  17 Nov 2026, 17:13:18
+
+. 
+. * 1. Cargar (desde el CSV, como read.csv en R)
+. *    encoding("utf-8"): el CSV trae tildes y ñ; sin esta opción,
+>  con version 14,
+. *    "Construcción" se leería "ConstrucciÃ³n".
+. import delimited "data/raw/casen_reducido.csv", clear varnames(1
+> ) encoding("utf-8")
+(6 vars, 60 obs)
+
+. 
+. * 2. Inspeccionar la estructura (el str() de R)
+. describe
+
+Contains data
+ Observations:            60                  
+    Variables:             6                  
+------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+------------------------------------------------------------------
+region          str13   %13s                  
+sector          str13   %13s                  
+educ            byte    %8.0g                 
+edad            byte    %8.0g                 
+ingreso         long    %12.0g                
+genero          str1    %9s                   
+------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. 
+. * 3. Crear una variable derivada (con intención económica)
+. generate ingreso_miles = ingreso / 1000   // en miles: más fácil
+>  de leer en tablas
+(5 missing values generated)
+
+. 
+. * 4. Describir
+. summarize ingreso educ edad
+
+    Variable |        Obs        Mean    Std. dev.       Min      
+>   Max
+-------------+----------------------------------------------------
+> -----
+     ingreso |         55    655290.9    209912.4     180000    10
+> 93000
+        educ |         60    12.73333    3.328697          6      
+>    20
+        edad |         60    44.51667    15.15959         20      
+>    70
+
+. 
+. log close
+      name:  <unnamed>
+       log:  C:\Users\Camila\Desktop\Fundamentos de Programación\R
+> epositorios\Repositorio_Sem12\output/s12s1_casen.log
+  log type:  text
+ closed on:  17 Nov 2026, 17:13:18
+------------------------------------------------------------------
